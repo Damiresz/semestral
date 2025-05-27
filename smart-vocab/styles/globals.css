@@ -1,3 +1,143 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.flip-card {
+  perspective: 1000px;
+  height: 200px;
+  cursor: pointer;
+  animation: card-fade-in 0.7s cubic-bezier(.39,.575,.565,1) both;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.25);
+  transition: box-shadow 0.3s, border 0.3s;
+  background: linear-gradient(135deg, #23272f 60%, #1e293b 100%);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.flip-card-front {
+  background-color: var(--card-front-bg);
+  color: var(--card-front-text);
+}
+
+.flip-card-back {
+  background-color: var(--card-back-bg);
+  color: var(--card-back-text);
+  transform: rotateY(180deg);
+}
+
+.flip-card:hover .flip-card-front,
+.flip-card.flipped .flip-card-back {
+  border: 2px solid var(--card-border-accent);
+  box-shadow: 0 0 24px 4px var(--card-shadow-accent);
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: scale(1.05);
+}
+
+.flip-card.flipped:hover .flip-card-inner {
+  transform: rotateY(180deg) scale(1.05);
+}
+
+.flip-card.flipped .flip-card-back {
+  border: 2px solid var(--card-border-green);
+  box-shadow: 0 0 24px 4px var(--card-shadow-green);
+  color: var(--card-border-green);
+}
+
+@keyframes card-fade-in {
+  0% { opacity: 0; transform: scale(0.95);}
+  100% { opacity: 1; transform: scale(1);}
+}
+
+:root {
+  --card-front-bg: #18181b;
+  --card-front-text: #f4f4f5;
+  --card-back-bg: #27272a;
+  --card-back-text: #22d3ee;
+  --card-border-accent: #38bdf8;
+  --card-border-green: #22c55e;
+  --card-shadow-accent: #38bdf8aa;
+  --card-shadow-green: #22c55e99;
+}
+
+.level-card {
+  background: linear-gradient(135deg, #23272f 60%, #1e293b 100%);
+  border: 2px solid transparent;
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.25);
+  transition: box-shadow 0.3s, border 0.3s, transform 0.2s;
+  color: var(--card-front-text);
+  animation: card-fade-in 0.7s cubic-bezier(.39,.575,.565,1) both;
+}
+
+.level-card:nth-child(1) {
+  --level-accent: #38bdf8;
+  border-color: var(--level-accent);
+}
+.level-card:nth-child(2) {
+  --level-accent: #818cf8;
+  border-color: var(--level-accent);
+}
+.level-card:nth-child(3) {
+  --level-accent: #f472b6;
+  border-color: var(--level-accent);
+}
+.level-card:nth-child(4) {
+  --level-accent: #facc15;
+  border-color: var(--level-accent);
+}
+.level-card:nth-child(5) {
+  --level-accent: #34d399;
+  border-color: var(--level-accent);
+}
+.level-card:nth-child(6) {
+  --level-accent: #f87171;
+  border-color: var(--level-accent);
+}
+
+.level-card:hover {
+  border-color: var(--level-accent);
+  box-shadow: 0 0 24px 4px var(--level-accent);
+} 

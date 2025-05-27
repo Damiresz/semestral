@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -8,134 +10,170 @@ import {
   NavbarMenuItem,
 } from "@heroui/navbar";
 import { Button } from "@heroui/button";
-import { Kbd } from "@heroui/kbd";
 import { Link } from "@heroui/link";
-import { Input } from "@heroui/input";
-import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
-import clsx from "clsx";
+import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from "next/navigation";
 
-import { siteConfig } from "@/config/site";
-import { ThemeSwitch } from "@/components/theme-switch";
-import {
-  TwitterIcon,
-  GithubIcon,
-  DiscordIcon,
-  HeartFilledIcon,
-  SearchIcon,
-  Logo,
-} from "@/components/icons";
+export default function Navbar() {
+  const { data: session } = useSession();
+  const router = useRouter();
 
-export const Navbar = () => {
-  const searchInput = (
-    <Input
-      aria-label="Search"
-      classNames={{
-        inputWrapper: "bg-default-100",
-        input: "text-sm",
-      }}
-      endContent={
-        <Kbd className="hidden lg:inline-block" keys={["command"]}>
-          K
-        </Kbd>
+  const handleSignOut = async () => {
+    if ('Notification' in window) {
+      if (Notification.permission === "granted") {
+        const notification = new Notification("Confirm sign out?", {
+          body: "Click to confirm logout.",
+          requireInteraction: true
+        });
+        notification.onclick = () => {
+          signOut();
+          notification.close();
+        };
+      } else if (Notification.permission !== "denied") {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+          handleSignOut();
+        }
+      } else {
+        if (typeof window !== "undefined" && (window as any).confirm("Are you sure you want to sign out?")) {
+          signOut();
+        }
       }
-      labelPlacement="outside"
-      placeholder="Search..."
-      startContent={
-        <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
+    } else {
+      if (typeof window !== "undefined" && (window as any).confirm("Are you sure you want to sign out?")) {
+        signOut();
       }
-      type="search"
-    />
-  );
+    }
+  };
 
   return (
     <HeroUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
-            <Logo />
-            <p className="font-bold text-inherit">ACME</p>
+            <p className="font-bold text-inherit">Smart Vocab</p>
           </NextLink>
         </NavbarBrand>
-        <ul className="hidden lg:flex gap-4 justify-start ml-2">
-          {siteConfig.navItems.map((item) => (
-            <NavbarItem key={item.href}>
-              <NextLink
-                className={clsx(
-                  linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium",
-                )}
-                color="foreground"
-                href={item.href}
-              >
-                {item.label}
-              </NextLink>
-            </NavbarItem>
-          ))}
-        </ul>
       </NavbarContent>
 
-      <NavbarContent
-        className="hidden sm:flex basis-1/5 sm:basis-full"
-        justify="end"
-      >
-        <NavbarItem className="hidden sm:flex gap-2">
-          <Link isExternal aria-label="Twitter" href={siteConfig.links.twitter}>
-            <TwitterIcon className="text-default-500" />
-          </Link>
-          <Link isExternal aria-label="Discord" href={siteConfig.links.discord}>
-            <DiscordIcon className="text-default-500" />
-          </Link>
-          <Link isExternal aria-label="Github" href={siteConfig.links.github}>
-            <GithubIcon className="text-default-500" />
-          </Link>
-          <ThemeSwitch />
-        </NavbarItem>
-        <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
-        <NavbarItem className="hidden md:flex">
-          <Button
-            isExternal
-            as={Link}
-            className="text-sm font-normal text-default-600 bg-default-100"
-            href={siteConfig.links.sponsor}
-            startContent={<HeartFilledIcon className="text-danger" />}
-            variant="flat"
-          >
-            Sponsor
-          </Button>
-        </NavbarItem>
+      <NavbarContent className="hidden sm:flex basis-1/5 sm:basis-full" justify="end">
+        {session?.user ? (
+          <>
+            <div className="flex gap-4 mr-auto">
+              <NavbarItem>
+                <Link href="/dashboard" color="primary" className="font-semibold px-2 py-1 hover:underline">
+                  Dashboard
+                </Link>
+              </NavbarItem>
+              <NavbarItem>
+                <Link href="/dashboard/more" color="primary" className="font-semibold px-2 py-1 hover:underline">
+                  More materials
+                </Link>
+              </NavbarItem>
+              <NavbarItem>
+                <button
+                  className="px-2 py-1 text-primary-600 font-semibold hover:underline bg-transparent border-none outline-none cursor-pointer"
+                  onClick={() => router.back()}
+                >
+                  ← Back
+                </button>
+              </NavbarItem>
+              <NavbarItem>
+                <button
+                  className="px-2 py-1 text-primary-600 font-semibold hover:underline bg-transparent border-none outline-none cursor-pointer"
+                  onClick={() => router.forward()}
+                >
+                  Forward →
+                </button>
+              </NavbarItem>
+            </div>
+            <NavbarItem className="flex items-center gap-4">
+              <span className="text-default-600">Welcome, {session.user.name}</span>
+              <Button
+                as={Link}
+                color="danger"
+                variant="flat"
+                onPress={handleSignOut}
+              >
+                Sign Out
+              </Button>
+            </NavbarItem>
+          </>
+        ) : (
+          <NavbarItem className="flex gap-4">
+            <Button
+              as={Link}
+              color="primary"
+              variant="flat"
+              href="/login"
+            >
+              Sign In
+            </Button>
+            <Button
+              as={Link}
+              color="primary"
+              href="/register"
+            >
+              Sign Up
+            </Button>
+          </NavbarItem>
+        )}
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <Link isExternal aria-label="Github" href={siteConfig.links.github}>
-          <GithubIcon className="text-default-500" />
-        </Link>
-        <ThemeSwitch />
         <NavbarMenuToggle />
       </NavbarContent>
 
       <NavbarMenu>
-        {searchInput}
-        <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
-              <Link
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
-                      ? "danger"
-                      : "foreground"
-                }
-                href="#"
-                size="lg"
-              >
-                {item.label}
+        {session?.user ? (
+          <div className="mx-4 mt-2 flex flex-col gap-2">
+            <NavbarMenuItem>
+              <Link href="/dashboard" color="primary" className="font-semibold px-2 py-1 hover:underline">
+                Levels
               </Link>
             </NavbarMenuItem>
-          ))}
-        </div>
+            <NavbarMenuItem>
+              <Link href="/dashboard/extra" color="primary" className="font-semibold px-2 py-1 hover:underline">
+                Extra
+              </Link>
+            </NavbarMenuItem>
+            <NavbarMenuItem>
+              <span className="text-default-600">Welcome, {session.user.name}</span>
+            </NavbarMenuItem>
+            <NavbarMenuItem>
+              <Link
+                color="danger"
+                onClick={handleSignOut}
+                size="lg"
+              >
+                Sign Out
+              </Link>
+            </NavbarMenuItem>
+          </div>
+        ) : (
+          <div className="mx-4 mt-2 flex flex-col gap-2">
+            <NavbarMenuItem>
+              <Link
+                color="primary"
+                href="/login"
+                size="lg"
+              >
+                Sign In
+              </Link>
+            </NavbarMenuItem>
+            <NavbarMenuItem>
+              <Link
+                color="primary"
+                href="/register"
+                size="lg"
+              >
+                Sign Up
+              </Link>
+            </NavbarMenuItem>
+          </div>
+        )}
       </NavbarMenu>
     </HeroUINavbar>
   );
-};
+}
