@@ -85,7 +85,6 @@ export default function StoriesSection({ stories }: StoriesSectionProps) {
     }
   };
 
-  // Скорость
   const handleRate = (idx: number, rate: number) => {
     const audio = audioRefs.current[idx];
     if (audio) {

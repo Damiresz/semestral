@@ -11,7 +11,6 @@ export default function VocabularyCards({ cards }: VocabularyCardsProps) {
   const [flippedCards, setFlippedCards] = useState<Set<string>>(new Set());
   const [viewed, setViewed] = useState<Set<string>>(new Set());
 
-  // Загружаем просмотренные карточки из sessionStorage при монтировании
   useEffect(() => {
     if (typeof window !== "undefined") {
       const stored = sessionStorage.getItem("viewedVocabulary");
@@ -21,7 +20,6 @@ export default function VocabularyCards({ cards }: VocabularyCardsProps) {
     }
   }, []);
 
-  // Обновляем sessionStorage при изменении viewed
   useEffect(() => {
     if (typeof window !== "undefined") {
       sessionStorage.setItem("viewedVocabulary", JSON.stringify(Array.from(viewed)));

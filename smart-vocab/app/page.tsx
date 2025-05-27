@@ -4,6 +4,7 @@ import { Card, CardBody } from "@heroui/card";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/config/auth";
 import { redirect } from "next/navigation";
+import { UserProgress, UserProgressManager } from "@/types/vocabulary";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -11,6 +12,14 @@ export default async function Home() {
   if (session) {
     redirect("/dashboard");
   }
+
+  const progressManager = new UserProgressManager();
+
+  progressManager.addUser(new UserProgress("1", "Alice", "B2", 80));
+  progressManager.addUser(new UserProgress("2", "Bob", "A2", 45));
+  progressManager.addUser(new UserProgress("3", "Charlie", "C1", 62));
+
+  const users = progressManager.getUsers();
 
   return (
     <main className="bg-background flex items-center justify-center">
@@ -48,7 +57,7 @@ export default async function Home() {
               </CardBody>
             </Card>
           </div>
-          {/* Моковая таблица */}
+          {/* Таблица с данными пользователей */}
           <div className="mt-10 max-w-2xl mx-auto">
             <div className="overflow-x-auto rounded-lg shadow">
               <table className="min-w-full divide-y divide-gray-200 bg-content1">
@@ -60,36 +69,25 @@ export default async function Home() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  <tr className="hover:bg-primary-50 transition">
-                    <td className="px-6 py-4 whitespace-nowrap font-semibold">Alice</td>
-                    <td className="px-6 py-4 whitespace-nowrap">B2</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                        <div className="bg-primary-500 h-2.5 rounded-full" style={{width: '80%'}}></div>
-                      </div>
-                      <span className="text-xs text-primary-700 ml-2">80%</span>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-primary-50 transition">
-                    <td className="px-6 py-4 whitespace-nowrap font-semibold">Bob</td>
-                    <td className="px-6 py-4 whitespace-nowrap">A2</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                        <div className="bg-green-500 h-2.5 rounded-full" style={{width: '45%'}}></div>
-                      </div>
-                      <span className="text-xs text-green-700 ml-2">45%</span>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-primary-50 transition">
-                    <td className="px-6 py-4 whitespace-nowrap font-semibold">Charlie</td>
-                    <td className="px-6 py-4 whitespace-nowrap">C1</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                        <div className="bg-sky-500 h-2.5 rounded-full" style={{width: '62%'}}></div>
-                      </div>
-                      <span className="text-xs text-sky-700 ml-2">62%</span>
-                    </td>
-                  </tr>
+                  {users.map((user) => {
+                    const progressInfo = user.getProgressInfo();
+                    const color = user.getProgressColor();
+                    return (
+                      <tr key={user.id} className="hover:bg-primary-50 transition">
+                        <td className="px-6 py-4 whitespace-nowrap font-semibold">{progressInfo.name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">{progressInfo.level}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                            <div 
+                              className={`bg-${color}-500 h-2.5 rounded-full`} 
+                              style={{width: `${progressInfo.progress}%`}}
+                            ></div>
+                          </div>
+                          <span className={`text-xs text-${color}-700 ml-2`}>{progressInfo.progress}%</span>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
