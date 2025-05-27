@@ -1,3 +1,8 @@
+/**
+ * Navigation bar component for the application
+ * Provides responsive navigation with authentication-aware UI elements
+ */
+
 "use client";
 
 import {
@@ -15,10 +20,21 @@ import NextLink from "next/link";
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from "next/navigation";
 
+/**
+ * Main navigation component that handles:
+ * - Responsive navigation menu
+ * - Authentication state display
+ * - Navigation controls (back/forward)
+ * - Sign out functionality with confirmation
+ */
 export default function Navbar() {
   const { data: session } = useSession();
   const router = useRouter();
 
+  /**
+   * Handles sign out process with confirmation
+   * Uses browser notifications if available, falls back to confirm dialog
+   */
   const handleSignOut = async () => {
     if ('Notification' in window) {
       if (Notification.permission === "granted") {
@@ -49,6 +65,7 @@ export default function Navbar() {
 
   return (
     <HeroUINavbar maxWidth="xl" position="sticky">
+      {/* Brand section */}
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
@@ -57,9 +74,11 @@ export default function Navbar() {
         </NavbarBrand>
       </NavbarContent>
 
+      {/* Desktop navigation menu */}
       <NavbarContent className="hidden sm:flex basis-1/5 sm:basis-full" justify="end">
         {session?.user ? (
           <>
+            {/* Navigation links for authenticated users */}
             <div className="flex gap-4 mr-auto">
               <NavbarItem>
                 <Link href="/dashboard" color="primary" className="font-semibold px-2 py-1 hover:underline">
@@ -71,6 +90,7 @@ export default function Navbar() {
                   More materials
                 </Link>
               </NavbarItem>
+              {/* Navigation controls */}
               <NavbarItem>
                 <button
                   className="px-2 py-1 text-primary-600 font-semibold hover:underline bg-transparent border-none outline-none cursor-pointer"
@@ -88,6 +108,7 @@ export default function Navbar() {
                 </button>
               </NavbarItem>
             </div>
+            {/* User info and sign out button */}
             <NavbarItem className="flex items-center gap-4">
               <span className="text-default-600">Welcome, {session.user.name}</span>
               <Button
@@ -121,13 +142,16 @@ export default function Navbar() {
         )}
       </NavbarContent>
 
+      {/* Mobile menu toggle */}
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
         <NavbarMenuToggle />
       </NavbarContent>
 
+      {/* Mobile navigation menu */}
       <NavbarMenu>
         {session?.user ? (
           <div className="mx-4 mt-2 flex flex-col gap-2">
+            {/* Mobile navigation items for authenticated users */}
             <NavbarMenuItem>
               <Link href="/dashboard" color="primary" className="font-semibold px-2 py-1 hover:underline">
                 Dashboard
@@ -138,6 +162,7 @@ export default function Navbar() {
                 More materials
               </Link>
             </NavbarMenuItem>
+            {/* Mobile navigation controls */}
             <NavbarMenuItem>
               <button
                 className="px-2 py-1 text-primary-600 font-semibold hover:underline bg-transparent border-none outline-none cursor-pointer"
@@ -154,6 +179,7 @@ export default function Navbar() {
                 Forward →
               </button>
             </NavbarMenuItem>
+            {/* Mobile user info and sign out */}
             <NavbarMenuItem>
               <span className="text-default-600">Welcome, {session.user.name}</span>
             </NavbarMenuItem>

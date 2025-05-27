@@ -1,6 +1,23 @@
+/**
+ * Server-side vocabulary actions
+ * Provides vocabulary data and level management
+ * Features predefined vocabulary cards and stories for different language levels
+ */
+
 "use server";
+
+/**
+ * Language proficiency levels from A1 (beginner) to C2 (mastery)
+ */
 export type Level = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
 
+/**
+ * Interface for vocabulary card data
+ * @property {string} id - Unique identifier for the card
+ * @property {string} english - English word or phrase
+ * @property {string} czech - Czech translation
+ * @property {Level} level - Language proficiency level
+ */
 export interface VocabularyCard {
   id: string;
   english: string;
@@ -8,6 +25,13 @@ export interface VocabularyCard {
   level: Level;
 }
 
+/**
+ * Interface for story data
+ * @property {string} id - Unique identifier for the story
+ * @property {string} title - Story title
+ * @property {string} text - Story content
+ * @property {string} audioUrl - URL to audio recording
+ */
 export interface Story {
   id: string;
   title: string;
@@ -15,8 +39,11 @@ export interface Story {
   audioUrl: string;
 }
 
+/**
+ * Get available language learning levels
+ * @returns {Promise<Array<{id: Level, name: string, description: string}>>} Array of level data
+ */
 export async function getLevels() {
-  
   return [
     { id: "A1", name: "Beginner", description: "Basic vocabulary and phrases" },
     { id: "A2", name: "Elementary", description: "Simple everyday expressions" },
@@ -27,8 +54,15 @@ export async function getLevels() {
   ];
 }
 
+/**
+ * Get vocabulary cards for a specific language level
+ * @param {Level} level - Language proficiency level
+ * @returns {Promise<VocabularyCard[]>} Array of vocabulary cards for the specified level
+ */
 export async function getVocabularyByLevel(level: Level) {
+  // Predefined vocabulary data for each level
   const data: Record<Level, VocabularyCard[]> = {
+    // A1 level - Basic vocabulary
     A1: [
       { id: "a1-1", english: "Hello", czech: "Ahoj", level },
       { id: "a1-2", english: "Goodbye", czech: "Sbohem", level },
@@ -40,6 +74,7 @@ export async function getVocabularyByLevel(level: Level) {
       { id: "a1-8", english: "Family", czech: "Rodina", level },
       { id: "a1-9", english: "Friend", czech: "Přítel", level },
     ],
+    // A2 level - Elementary vocabulary
     A2: [
       { id: "a2-1", english: "Breakfast", czech: "Snídaně", level },
       { id: "a2-2", english: "Lunch", czech: "Oběd", level },
@@ -51,6 +86,7 @@ export async function getVocabularyByLevel(level: Level) {
       { id: "a2-8", english: "Bus", czech: "Autobus", level },
       { id: "a2-9", english: "Train", czech: "Vlak", level },
     ],
+    // B1 level - Intermediate vocabulary
     B1: [
       { id: "b1-1", english: "Journey", czech: "Cesta", level },
       { id: "b1-2", english: "Experience", czech: "Zkušenost", level },
@@ -62,6 +98,7 @@ export async function getVocabularyByLevel(level: Level) {
       { id: "b1-8", english: "Failure", czech: "Neúspěch", level },
       { id: "b1-9", english: "Goal", czech: "Cíl", level },
     ],
+    // B2 level - Upper intermediate vocabulary
     B2: [
       { id: "b2-1", english: "Environment", czech: "Prostředí", level },
       { id: "b2-2", english: "Development", czech: "Rozvoj", level },
@@ -73,6 +110,7 @@ export async function getVocabularyByLevel(level: Level) {
       { id: "b2-8", english: "Economy", czech: "Ekonomika", level },
       { id: "b2-9", english: "Policy", czech: "Politika", level },
     ],
+    // C1 level - Advanced vocabulary
     C1: [
       { id: "c1-1", english: "Comprehensive", czech: "Komplexní", level },
       { id: "c1-2", english: "Substantial", czech: "Podstatný", level },
@@ -84,6 +122,7 @@ export async function getVocabularyByLevel(level: Level) {
       { id: "c1-8", english: "Paradigm", czech: "Paradigma", level },
       { id: "c1-9", english: "Discrepancy", czech: "Nesoulad", level },
     ],
+    // C2 level - Mastery vocabulary
     C2: [
       { id: "c2-1", english: "Ephemeral", czech: "Pomíjivý", level },
       { id: "c2-2", english: "Quintessential", czech: "Typický", level },

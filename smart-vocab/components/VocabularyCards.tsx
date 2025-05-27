@@ -1,16 +1,36 @@
+/**
+ * Vocabulary cards component that displays interactive flashcards
+ * Features flip animation and tracks viewed cards in session storage
+ */
+
 "use client";
 
 import { useEffect, useState } from "react";
 import { VocabularyCard } from "@/app/actions/vocabulary";
 
+/**
+ * Props interface for the VocabularyCards component
+ * @property {VocabularyCard[]} cards - Array of vocabulary cards to display
+ */
 interface VocabularyCardsProps {
   cards: VocabularyCard[];
 }
 
+/**
+ * VocabularyCards component that renders a grid of interactive flashcards
+ * Features:
+ * - Card flipping animation
+ * - Progress tracking for viewed cards
+ * - Responsive grid layout
+ * - Hover effects and visual indicators
+ */
 export default function VocabularyCards({ cards }: VocabularyCardsProps) {
+  // State for currently flipped cards
   const [flippedCards, setFlippedCards] = useState<Set<string>>(new Set());
+  // State for cards that have been viewed
   const [viewed, setViewed] = useState<Set<string>>(new Set());
 
+  // Load viewed cards from session storage on component mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const stored = sessionStorage.getItem("viewedVocabulary");
@@ -20,12 +40,17 @@ export default function VocabularyCards({ cards }: VocabularyCardsProps) {
     }
   }, []);
 
+  // Save viewed cards to session storage when updated
   useEffect(() => {
     if (typeof window !== "undefined") {
       sessionStorage.setItem("viewedVocabulary", JSON.stringify(Array.from(viewed)));
     }
   }, [viewed]);
 
+  /**
+   * Toggles the flip state of a card and marks it as viewed
+   * @param {string} cardId - ID of the card to toggle
+   */
   const toggleCard = (cardId: string) => {
     setFlippedCards(prev => {
       const newSet = new Set(prev);
@@ -50,6 +75,7 @@ export default function VocabularyCards({ cards }: VocabularyCardsProps) {
             onClick={() => toggleCard(card.id)}
           >
             <div className="flip-card-inner">
+              {/* Front side of the card */}
               <div className="flip-card-front relative">
                 <div className="text-center">
                   <p className="text-2xl font-bold tracking-wide">{card.english}</p>
@@ -57,12 +83,14 @@ export default function VocabularyCards({ cards }: VocabularyCardsProps) {
                     Click to see translation
                   </p>
                 </div>
+                {/* Viewed indicator */}
                 {isViewed && (
                   <span className="absolute top-2 right-3 text-sky-400 text-xl" title="Already viewed">
                     👁️
                   </span>
                 )}
               </div>
+              {/* Back side of the card */}
               <div className="flip-card-back relative">
                 <div className="text-center">
                   <p className="text-2xl font-bold tracking-wide">{card.czech}</p>
@@ -70,9 +98,10 @@ export default function VocabularyCards({ cards }: VocabularyCardsProps) {
                     Click to see original
                   </p>
                 </div>
+                {/* Viewed indicator */}
                 {isViewed && (
                   <span className="absolute top-2 right-3 text-sky-400 text-xl" title="Already viewed">
-                    👁️
+                    ��️
                   </span>
                 )}
               </div>
