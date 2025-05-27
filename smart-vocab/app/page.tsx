@@ -1,8 +1,8 @@
 import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
 import { Card, CardBody } from "@heroui/card";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/config/auth";
 import { redirect } from "next/navigation";
 
 export default async function Home() {

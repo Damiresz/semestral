@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "@/config/auth";
 import { Card, CardHeader, CardBody } from "@heroui/card";
 import { getLevels } from "../actions/vocabulary";
 import LevelCards from "@/components/LevelCards";

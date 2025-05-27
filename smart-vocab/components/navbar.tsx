@@ -130,13 +130,29 @@ export default function Navbar() {
           <div className="mx-4 mt-2 flex flex-col gap-2">
             <NavbarMenuItem>
               <Link href="/dashboard" color="primary" className="font-semibold px-2 py-1 hover:underline">
-                Levels
+                Dashboard
               </Link>
             </NavbarMenuItem>
             <NavbarMenuItem>
-              <Link href="/dashboard/extra" color="primary" className="font-semibold px-2 py-1 hover:underline">
-                Extra
+              <Link href="/dashboard/more" color="primary" className="font-semibold px-2 py-1 hover:underline">
+                More materials
               </Link>
+            </NavbarMenuItem>
+            <NavbarMenuItem>
+              <button
+                className="px-2 py-1 text-primary-600 font-semibold hover:underline bg-transparent border-none outline-none cursor-pointer"
+                onClick={() => router.back()}
+              >
+                ← Back
+              </button>
+            </NavbarMenuItem>
+            <NavbarMenuItem>
+              <button
+                className="px-2 py-1 text-primary-600 font-semibold hover:underline bg-transparent border-none outline-none cursor-pointer"
+                onClick={() => router.forward()}
+              >
+                Forward →
+              </button>
             </NavbarMenuItem>
             <NavbarMenuItem>
               <span className="text-default-600">Welcome, {session.user.name}</span>
