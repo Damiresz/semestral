@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            Int              @id @default(autoincrement())
+  username      String           @unique
+  email         String           @unique
+  passwordHash  String
+  createdAt     DateTime         @default(now())
+  lastLogin     DateTime?
+  vocabularyLists VocabularyList[]
+  progress      UserProgress[]
+  practiceSessions PracticeSession[]
+}
+
+model VocabularyList {
+  id          Int              @id @default(autoincrement())
+  title       String
+  description String?
+  isPublic    Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  userId      Int
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  words       VocabularyWord[]
+  practiceSessions PracticeSession[]
+}
+
+model VocabularyWord {
+  id          Int              @id @default(autoincrement())
+  word        String
+  translation String
+  imageUrl    String?
+  createdAt   DateTime         @default(now())
+  listId      Int
+  list        VocabularyList   @relation(fields: [listId], references: [id], onDelete: Cascade)
+  progress    UserProgress[]
+}
+
+model UserProgress {
+  id              Int            @id @default(autoincrement())
+  masteryLevel    Int            @default(0) // 0-5, где 5 - полное освоение
+  lastPracticed   DateTime?
+  correctAttempts Int            @default(0)
+  incorrectAttempts Int          @default(0)
+  userId          Int
+  wordId          Int
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word            VocabularyWord @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, wordId])
+}
+
+model PracticeSession {
+  id              Int            @id @default(autoincrement())
+  startTime       DateTime       @default(now())
+  endTime         DateTime?
+  totalWords      Int
+  correctAnswers  Int            @default(0)
+  incorrectAnswers Int           @default(0)
+  userId          Int
+  listId          Int
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  list            VocabularyList @relation(fields: [listId], references: [id], onDelete: Cascade)
+} 
